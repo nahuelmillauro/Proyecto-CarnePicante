@@ -1,0 +1,52 @@
+import medidasDeFuerza.*
+import personajes.*
+import gameExtensions.gameext
+import mapa.*
+import jornada.*
+
+const repartidor= new Repartidor(nombre="Nahuel", image= "repartidor_down.png", position=game.origin())
+const cocinero= new Cocinero (nombre= "Eugenia", image= "cocinero_125x125.png", position=game.at(3,12))
+const administrativo= new Administrativo (nombre= "Ivan", image= "administrativo_125x125.png", position=game.at(24,12))
+const cajero= new Cajero (nombre= "Matias", image= "cajero_125x125.png", position=game.at(3,6))
+const operario= new Operario (nombre= "Juan", image= "deposito_125x125.png", position=game.at(22,3))
+const jornada = new Jornada()
+const bgm = gameext.provider().sound("soundtrack.mp3")
+const huelgabgm = gameext.provider().sound("huelga.mp3")
+const derrota = gameext.provider().sound("gameover.mp3")
+const victoria = gameext.provider().sound("victory.mp3")
+
+
+program CarnePicante {
+	//no se puede setear el atributo fuera del programa asi que se pone aca
+	bgm.shouldLoop(true)
+	huelgabgm.shouldLoop(true)
+	gameext.context().put("trabajadores", [cocinero, administrativo, cajero, operario])
+	gameext.context().put("jornada", jornada)
+	gameext.context().put("musicaFondo", bgm)
+	gameext.context().put("musicaHuelga", huelgabgm)
+	gameext.context().put("musicaVictoria", victoria)
+	gameext.context().put("musicaDerrota", derrota)
+	obstaculos.forEach({obstaculo => gameext.provider().addVisual(obstaculo)})
+	gameext.provider().title("CarnePicante")
+	gameext.provider().height(20)
+	gameext.provider().width(30)
+	gameext.provider().boardGround("fondo30x20.png")
+	gameext.agregarRepartidor(repartidor)
+    gameext.provider().addVisual(cocinero)
+    gameext.provider().addVisual(administrativo)
+    gameext.provider().addVisual(cajero)
+    gameext.provider().addVisual(operario)
+	gameext.provider().onTick(1000, "verificar", { => gameext.verificarEnergia(repartidor) } )
+	// Esto es para reiniciar la jornada si la energía es 0
+	
+	gameext.provider().schedule(500, {gameext.context().basicGet("musicaFondo").play()})
+	gameext.context().basicGet("musicaHuelga").play()
+	gameext.context().basicGet("musicaHuelga").pause()
+	
+
+	
+
+	
+	gameext.provider().start()
+	
+}
